@@ -1,0 +1,29 @@
+# Ignore bundler config.
+/.bundle
+
+# Ignore the default SQLite database.
+/db/*.sqlite3
+/db/*.sqlite3-journal
+
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignore Byebug command history file.
+.byebug_history
+
+# Environment normalization:
+/.bundle/
+/vendor/bundle
+/lib/bundler/man/
+
+# Documentation cache and generated files:
+/.yardoc/
+/_yardoc/
+/doc/
+/rdoc/   
+
+#memes
+public/memes
