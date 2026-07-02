@@ -1,13 +1,16 @@
-ENV['APP_ENV'] = 'test' 
+# frozen_string_literal: true
+
+ENV['APP_ENV'] = 'test'
 
 require_relative '../app'
 require 'rack/test'
 
 module RSpecMixin
   include Rack::Test::Methods
-  def app() Sinatra::Application end
+  def app
+    Sinatra::Application
+  end
 end
-
 
 RSpec.configure do |config|
   config.include RSpecMixin
@@ -21,5 +24,4 @@ RSpec.configure do |config|
   end
 
   config.shared_context_metadata_behavior = :apply_to_host_groups
-
 end
