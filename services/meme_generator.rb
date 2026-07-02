@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'open-uri'
 require 'mini_magick'
 require 'securerandom'
-require_relative 'printer' 
+require_relative 'printer'
 
 class MemeGenerator
   OUTPUT_DIR = File.join(__dir__, '..', 'public', 'memes')
@@ -24,8 +26,8 @@ class MemeGenerator
     end
 
     filename
-  rescue => e
-    printer.error(e.message) if printer
+  rescue StandardError => e
+    printer&.error(e.message)
     nil
   end
 end

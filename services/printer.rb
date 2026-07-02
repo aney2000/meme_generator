@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Printer
   def self.error(message)
     puts "[API ERROR] #{message}"
