@@ -1,0 +1,4 @@
+curl http://localhost:4567/memes \
+     -H "Content-Type: application/json" \
+     -d '{"meme": {"image_url": "https://imgs.search.brave.com/5G6rkRP0SRHOq5A0EyKQL28qRHMI-3E8cC99-_KOceQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzQyLzdk/LzQ0LzQyN2Q0NGU5/NWMzZGI1MTA0M2Ex/MTZmMDM0NDU3ZDZm/LmpwZw", "text": "Learning Ruby"}}' \
+     -v
