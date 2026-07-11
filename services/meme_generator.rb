@@ -8,9 +8,11 @@ require_relative 'printer'
 class MemeGenerator
   OUTPUT_DIR = File.join(__dir__, '..', 'public', 'memes')
 
-  def self.call(image_url, text, printer: Printer)
+  def self.call(image_url, text, username: nil, printer: Printer)
     filename = "#{SecureRandom.hex(8)}.jpg"
-    filepath = File.join(OUTPUT_DIR, filename)
+    dir = username ? File.join(OUTPUT_DIR, username) : OUTPUT_DIR
+    Dir.mkdir(dir) unless Dir.exist?(dir)
+    filepath = File.join(dir, filename)
 
     URI.open(image_url) do |remote_file|
       image = MiniMagick::Image.read(remote_file.read)
