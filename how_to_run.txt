@@ -1,4 +1,16 @@
-curl http://localhost:4567/memes \
-     -H "Content-Type: application/json" \
-     -d '{"meme": {"image_url": "https://imgs.search.brave.com/5G6rkRP0SRHOq5A0EyKQL28qRHMI-3E8cC99-_KOceQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzQyLzdk/LzQ0LzQyN2Q0NGU5/NWMzZGI1MTA0M2Ex/MTZmMDM0NDU3ZDZm/LmpwZw", "text": "Learning Ruby"}}' \
-     -v
+Example of SignUp:
+curl -X POST http://localhost:4567/signup \
+  -H "Content-Type: application/json" \
+  -d '{"user":{"username":"andrei","password":"secret123"}}'
+
+Example of a LogIn:
+curl -X POST http://localhost:4567/login \
+  -H "Content-Type: application/json" \
+  -d '{"user":{"username":"andrei","password":"secret123"}}'
+
+Example of a meme generation: 
+curl -X POST http://localhost:4567/memes \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{"meme":{"image_url":"https://imgs.search.brave.com/br44lmpjg_PZlYjqQitWCg4CJ5zpDSph5mZsuhChyQk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLmlt/Z2ZsaXAuY29tLzQv/MjR6b2E4LmpwZw","text":"Learning Ruby"}}' \
+  -v
