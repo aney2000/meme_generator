@@ -9,8 +9,9 @@ class Login
       result = ValidUser.call(username, password)
       return result unless result[:success]
 
-      user = UserStore.authenticate_user(username, password)
+      user = UserStore.authenticate_user(username)
       return invalid_result('Invalid username or password') unless user
+      return invalid_result('Invalid username or password') unless BCrypt::Password.new(user[:password_hash]) == password
 
       { success: true, user: user, token: user[:token] }
     end

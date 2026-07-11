@@ -16,17 +16,11 @@ class UserStore
       { success: false, errors: ['User already exists'] }
     end
 
-    def authenticate_user(username, password)
+    def authenticate_user(username)
       username_value = username.to_s.strip
-      password_value = password.to_s
+      return nil if username_value.empty?
 
-      return nil if username_value.empty? || password_value.strip.empty?
-
-      row = DB[:users].where(username: username_value).first
-      return nil unless row
-      return row if BCrypt::Password.new(row[:password_hash]) == password_value
-
-      nil
+      DB[:users].where(username: username_value).first
     rescue StandardError
       nil
     end
