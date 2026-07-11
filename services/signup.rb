@@ -1,18 +1,17 @@
 # frozen_string_literal: true
 
 require_relative 'user_store'
+require_relative 'valid_user'
 
 class Signup
   class << self
     def call(username, password)
-      username_value = username.to_s.strip
-      password_value = password.to_s
+      result = ValidUser.call(username, password)
+      return result unless result[:success]
 
-      return invalid_result('Username is blank') if username_value.empty?
-      return invalid_result('Password is blank') if password_value.strip.empty?
-      return invalid_result('User already exists') if UserStore.find_user_by_username(username_value)
+      return invalid_result('User already exists') if UserStore.find_user_by_username(username)
 
-      UserStore.create_user(username_value, password_value)
+      UserStore.create_user(username, password)
     end
 
     private

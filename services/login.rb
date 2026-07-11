@@ -1,22 +1,24 @@
 # frozen_string_literal: true
 
 require_relative 'user_store'
+require_relative 'valid_user'
 
 class Login
-  def self.call(username, password)
-    username_value = username.to_s.strip
-    password_value = password.to_s
+  class << self
+    def call(username, password)
+      result = ValidUser.call(username, password)
+      return result unless result[:success]
 
-    return invalid_result('Username is blank') if username_value.empty?
-    return invalid_result('Password is blank') if password_value.strip.empty?
+      user = UserStore.authenticate_user(username, password)
+      return invalid_result('Invalid username or password') unless user
 
-    user = UserStore.authenticate_user(username_value, password_value)
-    return invalid_result('Invalid username or password') unless user
+      { success: true, user: user, token: user[:token] }
+    end
 
-    { success: true, user: user, token: user[:token] }
-  end
+    private
 
-  def self.invalid_result(message)
-    { success: false, errors: [message] }
+    def invalid_result(message)
+      { success: false, errors: [message] }
+    end
   end
 end

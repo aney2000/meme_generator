@@ -73,7 +73,8 @@ RSpec.describe 'Meme Generator API' do
       end
 
       before do
-        allow(URI).to receive(:open).and_yield(double('remote_file', read: 'a' * (MemeGenerator::MAX_IMAGE_SIZE_BYTES + 1)))
+        allow(URI).to receive(:open).and_yield(double('remote_file',
+                                                      read: 'a' * (MemeGenerator::MAX_IMAGE_SIZE_BYTES + 1)))
       end
 
       it 'returns 413 and an error message' do

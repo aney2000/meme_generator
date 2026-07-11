@@ -18,9 +18,7 @@ class MemeGenerator
     URI.open(image_url) do |remote_file|
       bytes = remote_file.read
 
-      if bytes.bytesize > MAX_IMAGE_SIZE_BYTES
-        raise ArgumentError, 'Image is too large'
-      end
+      raise ArgumentError, 'Image is too large' if bytes.bytesize > MAX_IMAGE_SIZE_BYTES
 
       image = MiniMagick::Image.read(bytes)
       image.combine_options do |c|
