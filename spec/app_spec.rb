@@ -61,5 +61,28 @@ RSpec.describe 'Meme Generator API' do
         expect(json_response['error']).to include('Missing required parameters')
       end
     end
+
+    context 'when the image is larger than the allowed size' do
+      let(:payload) do
+        {
+          meme: {
+            image_url: 'https://example.com/large-image.jpg',
+            text: 'Too big'
+          }
+        }.to_json
+      end
+
+      before do
+        allow(URI).to receive(:open).and_yield(double('remote_file', read: 'a' * (MemeGenerator::MAX_IMAGE_SIZE_BYTES + 1)))
+      end
+
+      it 'returns 413 and an error message' do
+        env = { 'CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => "Bearer #{token}" }
+        post '/memes', payload, env
+
+        expect(last_response.status).to eq(413)
+        expect(JSON.parse(last_response.body)['error']).to eq('Image is too large')
+      end
+    end
   end
 end

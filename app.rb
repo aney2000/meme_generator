@@ -54,7 +54,11 @@ post '/memes' do
     halt 400, { error: 'image_url must be a valid http or https URL' }.to_json
   end
 
-  filename = MemeGenerator.call(image_url, text, username: user[:username])
+  begin
+    filename = MemeGenerator.call(image_url, text, username: user[:username])
+  rescue ArgumentError => e
+    halt 413, { error: e.message }.to_json
+  end
 
   if filename
     meme_url = "#{request.base_url}/memes/#{user[:username]}/#{filename}"
