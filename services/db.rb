@@ -3,11 +3,16 @@
 require 'securerandom'
 require 'sequel'
 
-DB_DIR = File.join(__dir__, '..', 'db')
-Dir.mkdir(DB_DIR) unless Dir.exist?(DB_DIR)
+DB =
+  if ENV['APP_ENV'] == 'test'
+    Sequel.sqlite
+  else
+    DB_DIR = File.join(__dir__, '..', 'db')
+    Dir.mkdir(DB_DIR) unless Dir.exist?(DB_DIR)
 
-DB_PATH = File.join(DB_DIR, 'users.db')
-DB = Sequel.sqlite(DB_PATH)
+    DB_PATH = File.join(DB_DIR, 'users.db')
+    Sequel.sqlite(DB_PATH)
+  end
 
 if DB.table_exists?(:users)
   column_names = DB.schema(:users).map { |column| column[0] }
