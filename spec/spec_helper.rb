@@ -2,6 +2,12 @@
 
 ENV['APP_ENV'] = 'test'
 
+require 'simplecov'
+SimpleCov.start do
+  skip '/spec/'
+  cover 'app.rb', 'services/**/*.rb'
+end
+
 require_relative '../app'
 require 'rack/test'
 

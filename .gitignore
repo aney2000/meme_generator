@@ -28,3 +28,6 @@
 
 #memes
 public/memes
+
+# Test coverage reports.
+/coverage/
