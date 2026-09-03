@@ -62,7 +62,7 @@ post '/memes' do
 
   if filename
     meme_url = "#{request.base_url}/memes/#{user[:username]}/#{filename}"
-    redirect meme_url, 303
+    redirect meme_url, 307
   else
     halt 422, { error: 'Failed to process the image from the provided URL' }.to_json
   end

@@ -29,11 +29,11 @@ RSpec.describe 'Meme Generator API' do
         allow(MiniMagick::Image).to receive(:read).and_return(mock_image)
       end
 
-      it 'returns 303 and redirects to the generated meme' do
+      it 'returns 307 and redirects to the generated meme' do
         env = { 'CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => "Bearer #{token}" }
         post '/memes', payload, env
 
-        expect(last_response.status).to eq(303)
+        expect(last_response.status).to eq(307)
         expect(last_response.headers['Location']).to include('/memes/andrei/')
       end
     end
