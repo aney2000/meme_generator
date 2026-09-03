@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'fileutils'
 require 'open-uri'
 require 'mini_magick'
 require 'securerandom'
@@ -9,17 +10,41 @@ class MemeGenerator
   OUTPUT_DIR = File.join(__dir__, '..', 'public', 'memes')
   MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024
 
-  def self.call(image_url, text, username: nil, printer: Printer)
-    filename = "#{SecureRandom.hex(8)}.jpg"
-    dir = username ? File.join(OUTPUT_DIR, username) : OUTPUT_DIR
-    Dir.mkdir(dir) unless Dir.exist?(dir)
-    filepath = File.join(dir, filename)
+  class << self
+    def call(image_url, text, username: nil, printer: Printer)
+      filename = "#{SecureRandom.hex(8)}.jpg"
+      filepath = File.join(target_dir(username), filename)
 
-    URI.open(image_url) do |remote_file|
-      bytes = remote_file.read
+      annotate_remote_image(image_url, text, filepath)
 
-      raise ArgumentError, 'Image is too large' if bytes.bytesize > MAX_IMAGE_SIZE_BYTES
+      filename
+    rescue ArgumentError => e
+      printer&.error(e.message)
+      raise e
+    rescue StandardError => e
+      printer&.error(e.message)
+      nil
+    end
 
+    private
+
+    def target_dir(username)
+      dir = username ? File.join(OUTPUT_DIR, username) : OUTPUT_DIR
+      FileUtils.mkdir_p(dir)
+      dir
+    end
+
+    # image_url is validated as http/https at the request boundary before reaching here.
+    def annotate_remote_image(image_url, text, filepath)
+      URI.open(image_url) do |remote_file| # rubocop:disable Security/Open
+        bytes = remote_file.read
+        raise ArgumentError, 'Image is too large' if bytes.bytesize > MAX_IMAGE_SIZE_BYTES
+
+        write_meme(bytes, text, filepath)
+      end
+    end
+
+    def write_meme(bytes, text, filepath)
       image = MiniMagick::Image.read(bytes)
       image.combine_options do |c|
         c.gravity 'center'
@@ -31,13 +56,5 @@ class MemeGenerator
       end
       image.write(filepath)
     end
-
-    filename
-  rescue ArgumentError => e
-    printer&.error(e.message)
-    raise e
-  rescue StandardError => e
-    printer&.error(e.message)
-    nil
   end
 end

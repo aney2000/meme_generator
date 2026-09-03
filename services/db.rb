@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'fileutils'
 require 'securerandom'
 require 'sequel'
 
@@ -8,7 +9,7 @@ DB =
     Sequel.sqlite
   else
     DB_DIR = File.join(__dir__, '..', 'db')
-    Dir.mkdir(DB_DIR) unless Dir.exist?(DB_DIR)
+    FileUtils.mkdir_p(DB_DIR)
 
     DB_PATH = File.join(DB_DIR, 'users.db')
     Sequel.sqlite(DB_PATH)
