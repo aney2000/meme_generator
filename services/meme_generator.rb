@@ -7,13 +7,20 @@ require_relative 'printer'
 
 class MemeGenerator
   OUTPUT_DIR = File.join(__dir__, '..', 'public', 'memes')
+  MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024
 
-  def self.call(image_url, text, printer: Printer)
+  def self.call(image_url, text, username: nil, printer: Printer)
     filename = "#{SecureRandom.hex(8)}.jpg"
-    filepath = File.join(OUTPUT_DIR, filename)
+    dir = username ? File.join(OUTPUT_DIR, username) : OUTPUT_DIR
+    Dir.mkdir(dir) unless Dir.exist?(dir)
+    filepath = File.join(dir, filename)
 
     URI.open(image_url) do |remote_file|
-      image = MiniMagick::Image.read(remote_file.read)
+      bytes = remote_file.read
+
+      raise ArgumentError, 'Image is too large' if bytes.bytesize > MAX_IMAGE_SIZE_BYTES
+
+      image = MiniMagick::Image.read(bytes)
       image.combine_options do |c|
         c.gravity 'center'
         c.font 'Helvetica'
@@ -26,6 +33,9 @@ class MemeGenerator
     end
 
     filename
+  rescue ArgumentError => e
+    printer&.error(e.message)
+    raise e
   rescue StandardError => e
     printer&.error(e.message)
     nil
