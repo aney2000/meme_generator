@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe 'Auth API endpoints' do
-  before(:each) do
+  before do
     DB[:users].delete
   end
 

@@ -17,7 +17,7 @@ RSpec.describe MemeGenerator do
       end
 
       it 'returns the generated filename without hitting the internet' do
-        filename = MemeGenerator.call(valid_url, text, printer: nil)
+        filename = described_class.call(valid_url, text, printer: nil)
 
         expect(filename).to be_a(String)
         expect(filename).to end_with('.jpg')
@@ -26,11 +26,12 @@ RSpec.describe MemeGenerator do
 
     context 'when the URL is invalid' do
       before do
-        allow(URI).to receive(:open).with('https://invalid-url.com').and_raise(SocketError.new('Failed to open TCP connection'))
+        connection_error = SocketError.new('Failed to open TCP connection')
+        allow(URI).to receive(:open).with('https://invalid-url.com').and_raise(connection_error)
       end
 
       it 'returns nil without printing to the terminal' do
-        filename = MemeGenerator.call('https://invalid-url.com', text, printer: nil)
+        filename = described_class.call('https://invalid-url.com', text, printer: nil)
         expect(filename).to be_nil
       end
     end

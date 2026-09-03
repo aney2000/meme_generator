@@ -1,0 +1,40 @@
+plugins:
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 3.2
+  NewCops: enable
+  Exclude:
+    - 'vendor/**/*'
+    - 'db/**/*'
+
+# Small service objects and the Sinatra app do not need class-level docs.
+Style/Documentation:
+  Enabled: false
+
+# Enforce LF line endings across platforms (repo is developed on WSL/Linux).
+Layout/EndOfLine:
+  EnforcedStyle: lf
+
+# RSpec describe/context blocks are naturally long.
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+# Request/integration specs describe an API endpoint by name, not a class.
+RSpec/DescribeClass:
+  Enabled: false
+
+# Opinionated spec-structure cops that conflict with the existing, readable
+# test style are relaxed to avoid churn without improving clarity.
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/VerifiedDoubles:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false

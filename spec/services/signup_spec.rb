@@ -3,13 +3,13 @@
 require 'spec_helper'
 
 RSpec.describe Signup do
-  before(:each) do
+  before do
     DB[:users].delete
   end
 
   describe '.call' do
     it 'creates a new user and returns a success result' do
-      result = Signup.call('bob', 'password123')
+      result = described_class.call('bob', 'password123')
 
       expect(result[:success]).to be true
       expect(result[:token]).to be_a(String)
@@ -20,15 +20,15 @@ RSpec.describe Signup do
     end
 
     it 'returns an error result when the username already exists' do
-      Signup.call('bob', 'password123')
-      result = Signup.call('bob', 'otherpass')
+      described_class.call('bob', 'password123')
+      result = described_class.call('bob', 'otherpass')
 
       expect(result[:success]).to be false
       expect(result[:errors]).to include('User already exists')
     end
 
     it 'returns an error result for blank input' do
-      result = Signup.call('   ', '')
+      result = described_class.call('   ', '')
 
       expect(result[:success]).to be false
       expect(result[:errors]).to include('Username is blank')
