@@ -85,5 +85,40 @@ RSpec.describe 'Meme Generator API' do
         expect(JSON.parse(last_response.body)['error']).to eq('Image is too large')
       end
     end
+
+    context 'when the image_url is not an http(s) URL' do
+      it 'returns 400 with a validation message' do
+        payload = { meme: { image_url: 'javascript:alert(1)', text: 'Nope' } }.to_json
+        env = { 'CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => "Bearer #{token}" }
+
+        post '/memes', payload, env
+
+        expect(last_response.status).to eq(400)
+        expect(JSON.parse(last_response.body)['error']).to eq('image_url must be a valid http or https URL')
+      end
+    end
+
+    context 'when the request body is malformed JSON' do
+      it 'returns 400' do
+        env = { 'CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => "Bearer #{token}" }
+
+        post '/memes', 'this is not json', env
+
+        expect(last_response.status).to eq(400)
+      end
+    end
+
+    context 'when the generator cannot process the image' do
+      it 'returns 422' do
+        allow(MemeGenerator).to receive(:call).and_return(nil)
+        payload = { meme: { image_url: 'https://example.com/cat.jpg', text: 'Hi' } }.to_json
+        env = { 'CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => "Bearer #{token}" }
+
+        post '/memes', payload, env
+
+        expect(last_response.status).to eq(422)
+        expect(JSON.parse(last_response.body)['error']).to include('Failed to process the image')
+      end
+    end
   end
 end
